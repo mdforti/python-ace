@@ -147,7 +147,11 @@ PyACE ASE calculator
 
         self.energy, self.forces = np.array(self.ace.energy), np.array(self.ace.forces)
         nat = len(atoms)
-        self.projections = np.reshape(self.ace.projections, (nat, -1))
+        ragged_projections = self.ace.projections
+        maxlen = max([len(this_proj) for this_proj in ragged_projections])
+        padded_projections = [np.pad(this_proj, (0, maxlen-len(this_proj))) for this_proj in ragged_projections ]
+        self.projections = np.vstack(padded_projections)
+#        self.projections = np.reshape(self.ace.projections, (nat, -1))
 
         self.energies = np.array(self.ace.energies)
 
